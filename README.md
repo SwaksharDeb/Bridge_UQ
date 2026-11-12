@@ -1,8 +1,4 @@
-# Bridge_UQ
-
 # BridgeUQ: Bayesian Aleatoric Uncertainty Quantification for Time-Series Image Registration via Brownian Bridge Prior
-
-Official PyTorch implementation of **BridgeUQ**, a plug-and-play Bayesian module that quantifies **aleatoric uncertainty** of *any pretrained, deterministic* registration network over **spatiotemporal deformation trajectories** — without retraining the backbone.
 
 <p align="center">
   <img src="assets/bridgeuq_overview.png" width="100%" alt="BridgeUQ overview">
