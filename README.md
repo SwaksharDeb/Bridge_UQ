@@ -2,7 +2,7 @@
 
 ![BridgeUQ overview](figure/iclr_v3_updated.png)
 
-*Top: BridgeUQ integrated with a frozen pretrained registration network — the backbone predicts a velocity sequence $\hat v$, and BridgeUQ turns it into a per-voxel scalar uncertainty map for every frame. *Bottom:* BridgeUQ in detail — a network $f_\theta$ predicts a spatially varying diffusion variance $\sigma$ that controls the perturbations of a GP-Brownian bridge around the registration trajectory, giving the posterior $P_\omega(v \mid \sigma, \hat v, I)$. Once trained, BridgeUQ is used as a plug-and-play module.*
+*An overview of BridgeUQ integrated with pretrained registration networks (Top); Detailed design of BridgeUQ (Bottom). Once trained, BridgeUQ can be used as a plug-and-play module.*
 
 ---
 
