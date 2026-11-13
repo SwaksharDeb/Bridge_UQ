@@ -41,18 +41,6 @@ pip install numpy matplotlib tqdm
 
 Additional dependencies are determined by the shared modules. A complete environment specification is not currently included.
 
-## Configuration
-
-The current scripts use the original project's Python package layout:
-
-- `uncertainty_sde_combined_acdc_v3_iclr`: shared backbone loaders, Brownian bridge implementation, networks, losses, trainer, warping, and evaluation helpers.
-- `uncertainty_sde_combined_acdc_v3_iclr_mcem_gd`: the package name used for the files in this repository.
-
-To use the examples below, place this repository under the second package name within a parent directory containing the shared package, and add that parent directory to `PYTHONPATH`. The GEM script also requires `samplers.py` and `sigma_contrast.py` in the second package; these files are not currently included.
-
-The scripts contain an author-specific `sys.path` entry. Replace it with your local project path or configure `PYTHONPATH` accordingly. Configure dataset locations and pretrained checkpoints through the shared `load_backbone_and_data` implementation.
-
-Selected `main.py` options:
 
 | Option | Purpose |
 | --- | --- |
