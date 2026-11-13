@@ -188,19 +188,14 @@ gamma for this mode rather than inheriting the per-sequence guidance default.
 import os
 import sys
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(script_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-
 import numpy as np
 import torch
 from tqdm import tqdm
 
-from uncertainty_sde_combined_acdc_v3_iclr.brownian_bridge import BrownianBridgeLearnedScaling
-from uncertainty_sde_combined_acdc_v3_iclr.test_fast import _assemble_scaling_factors_bb
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.langevin import draw_velocities
-from uncertainty_sde_combined_acdc_v3_iclr.losses import Grad as LTMAGrad
+from brownian_bridge import BrownianBridgeLearnedScaling
+from test_fast import _assemble_scaling_factors_bb
+from langevin import draw_velocities
+from losses import Grad as LTMAGrad
 
 # Shared l2 gradient penalty for smooth_weight, as in
 # uncertainty_sde_acdc_combined_iclr_2/main_langevin.py. Stateless, so one

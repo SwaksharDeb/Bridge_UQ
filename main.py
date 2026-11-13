@@ -40,12 +40,12 @@ Key knobs (see --help for the rest):
     --batch_size    image sequences per GPU pass (each keeps its own sigma^i)
 
 Run with:
-    python uncertainty_sde_combined_acdc_v3_iclr_mcem_gd/main.py \
+    python main.py \
       --backbone tlrn --batch_size 8 --em_rounds 10 --em_samples 500 \
       --sample_chunk 32 --num_runs 100
 
 Smoke test:
-    python uncertainty_sde_combined_acdc_v3_iclr_mcem_gd/main.py \
+    python main.py \
       --em_rounds 3 --em_samples 32 --sample_chunk 32 \
       --batch_size 8 --max_batches 1 --num_workers 0 \
       --optimize_only --no_training_vis --vis_every 0 --output_dir ./mcem_gd_smoke
@@ -58,13 +58,6 @@ B_eff = sample_chunk * batch_size, so --batch_size CHANGES the results.
 import os
 import sys
 
-sys.path.append("/sfs/weka/scratch/swd9tc/Uncertanity_quantification/LightingTemplate_2")
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(script_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-
 import argparse
 import gc
 import json
@@ -73,13 +66,13 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from uncertainty_sde_combined_acdc_v3_iclr.brownian_bridge import BrownianBridgeLearnedScaling
-from uncertainty_sde_combined_acdc_v3_iclr.trainer import ScalingFactorTrainer
-from uncertainty_sde_combined_acdc_v3_iclr.backbones import load_backbone_and_data
+from brownian_bridge import BrownianBridgeLearnedScaling
+from trainer import ScalingFactorTrainer
+from backbones import load_backbone_and_data
 
 # Metric / plotting helpers are imported (not copied) from test_fast.py so these
 # numbers are produced by exactly the same code as the learned pipeline's.
-from uncertainty_sde_combined_acdc_v3_iclr.test_fast import (
+from test_fast import (
     _compute_sparsification_curves,
     _compute_risk_coverage_curves,
     compute_registration_metrics,
@@ -88,20 +81,20 @@ from uncertainty_sde_combined_acdc_v3_iclr.test_fast import (
 # Summary writers shared with the sigma ablations, so all four reports
 # (learned / random / fixed / closed-form) are formatted identically and are
 # directly comparable line for line.
-from uncertainty_sde_combined_acdc_v3_iclr.main_random_sigma import (
+from reports import (
     _write_summary,
     _write_reg_metrics,
 )
 
-from uncertainty_sde_combined_acdc_v3_iclr.losses import LTMALoss
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.mcem import (
+from losses import LTMALoss
+from mcem import (
     mcem_refine, sigma_init, PerSequenceBridge,
     convention_scale,
     scaling_to_sigma, _expand_sf_bb,
 )
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.viz import (
+from viz import (
     save_sigma_panel)
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.langevin import draw_velocities
+from langevin import draw_velocities
 
 # Fixed in this file: Langevin E-step, Adam gradient-descent M-step.
 SAMPLER = 'langevin'
@@ -954,13 +947,6 @@ def main():
           f"nAUSE {o_nause_m:.4f} +/- {o_nause_s:.4f}")
     print(f"{'=' * 70}")
     print(f"\nAll results written under: {out_root}")
-    print("Compare against the learned pipeline:")
-    print(f"  {config.model.params.workdir}/visualization/"
-          f"uncertainty_sde_combined_acdc_v3_iclr/aggregate/"
-          f"per_frame_nAURC_nAUSE_summary.txt")
-    print("and against the fixed-sigma ablation:")
-    print("  python -m uncertainty_sde_combined_acdc_v3_iclr.main_fixed_sigma "
-          f"--backbone {args.backbone} --num_runs {NUM_RUNS}")
 
 
 if __name__ == "__main__":

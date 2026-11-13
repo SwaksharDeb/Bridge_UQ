@@ -55,7 +55,7 @@ the wall moves, so without this its low band lines up with the wall only at one
 phase of the cycle. This only changes the scoring; the draws are unchanged.
 
 Usage:
-  python uncertainty_sde_combined_acdc_v3_iclr_mcem_gd/test_mcem.py \
+  python test_mcem.py \
       --s_K_dir <.../uncertainty_sde_combined_acdc_v3_iclr_mcem_gd/s_K> \
       --files batch_000.pt --output_dir ./test_mcem_batch000 \
       --burn_in 300 --thin 1 --num_runs 100 \
@@ -70,22 +70,17 @@ import re
 import sys
 import textwrap
 
-sys.path.append("/sfs/weka/scratch/swd9tc/Uncertanity_quantification/LightingTemplate_2")
-script_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(script_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
 
 import torch
 import torch.utils.data as tud
 
-import uncertainty_sde_combined_acdc_v3_iclr.test_fast as TF
-import uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.main as M
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.mcem import scaling_to_sigma
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.langevin import langevin_velocities
+import test_fast as TF
+import main as M
+from mcem import scaling_to_sigma
+from langevin import langevin_velocities
 
 pre = argparse.ArgumentParser(add_help=False)
-pre.add_argument('--s_K_dir', default='2026Experiments/CINE/outputs/TLRN/basic_MSE_Penp_img1200Reg0.03_plus_ACDC/visualization/uncertainty_sde_combined_acdc_v3_iclr_mcem_gd/sigma_vis/batch_000/values',
+pre.add_argument('--s_K_dir', default='outputs/TLRN/basic_MSE_Penp_img1200Reg0.03_plus_ACDC/visualization/uncertainty_sde_combined_acdc_v3_iclr_mcem_gd/sigma_vis/batch_000/values',
                  help='Directory holding the saved batch_*.pt files.')
 pre.add_argument('--files', nargs='+', default=['round_0010.pt'],
                  help='Subset of batch files in --s_K_dir (default: all batch_*.pt). '

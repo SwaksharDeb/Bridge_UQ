@@ -43,7 +43,7 @@ Outputs under --output_dir (default: the folder main.py writes to; all gem_-pref
                                                   main.py's s_K, for test_fast.py
 
 Example:
-    python -m uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.gem_unet \
+    python gem_unet.py \
         --rounds 300 --batch_size 8 --em_samples 32 --m_steps 5 \
         --langevin_algorithm psgld --langevin_steps 100 --langevin_step_size 0.05 \
         --gamma 5e-6 --reg_weight 0
@@ -52,8 +52,6 @@ Example:
 import os
 import sys
 
-sys.path.append("/sfs/weka/scratch/swd9tc/Uncertanity_quantification/LightingTemplate_2")
-
 import argparse
 import json
 import time
@@ -61,14 +59,14 @@ import time
 import numpy as np
 import torch
 
-from uncertainty_sde_combined_acdc_v3_iclr.networks import SigmaRegressionNetwork
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.mcem import (
+from networks import SigmaRegressionNetwork
+from mcem import (
     bridge_residual_S, sigma_init, sigma_to_scaling)
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.samplers import (
+from samplers import (
     adaptive_langevin_velocities, ALGORITHMS)
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.sigma_contrast import (
+from sigma_contrast import (
     edge_contrast, summarize)
-from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.viz import save_sigma_panel
+from viz import save_sigma_panel
 
 
 def q_loss(sigma, S_bar, alpha, beta, T):
@@ -195,7 +193,7 @@ def main():
     np.random.seed(args.seed)
 
     from torch.utils.data import DataLoader
-    from uncertainty_sde_combined_acdc_v3_iclr.backbones import load_backbone_and_data
+    from backbones import load_backbone_and_data
     model, train_loader, test_loader, config = load_backbone_and_data(
         backbone=args.backbone, combine_acdc=True)
 
@@ -253,8 +251,8 @@ def main():
              else min(max(0, args.vis_subject_idx), Bev - 1))
     vis_trainer = None
     if args.training_vis:
-        from uncertainty_sde_combined_acdc_v3_iclr.trainer import ScalingFactorTrainer
-        from uncertainty_sde_combined_acdc_v3_iclr_mcem_gd.mcem import (
+        from trainer import ScalingFactorTrainer
+        from mcem import (
             PerSequenceBridge, _expand_sf_bb)
         vis_trainer = ScalingFactorTrainer(
             scaling_network=None,
