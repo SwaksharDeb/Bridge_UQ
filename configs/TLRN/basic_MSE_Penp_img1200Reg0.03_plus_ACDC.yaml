@@ -1,0 +1,55 @@
+model:
+  pretrained_checkpoint: 2026Experiments/CINE/outputs/TLRN/basic_MSE_Penp_img1200Reg0.03_plus_ACDC/checkpoints/epoch=637-val_mse=0.0045.ckpt
+
+  params:
+    ch_sz: 1
+    weight_reg: 0.03
+    regis_lr: 0.001
+
+
+data:
+  target: dataload.2025data.DataModuleFromConfig
+  params:
+    batch_size: 100
+    num_workers: 4
+    batch_size_test: 20  #312
+
+    train:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        normalize: "None"
+        resize: [64, 64]
+        split: "train"
+        start_frame: "0"
+        dataBase: "0TLRN_Foundation"
+        trainList: "train_1200_plus_ACDC"
+        train_index_endEstolic_list: "index_endEstolic_train_1200_plus_ACDC"
+        testidList: "testid_files_frames24_25_NormPer"
+
+
+
+    valid:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        normalize: "None"
+        resize: [64, 64]
+        split: "valid"
+        start_frame: "0"
+        dataBase: "0TLRN_Foundation"
+        trainList: "train_1200_img"
+        train_index_endEstolic_list: "index_endEstolic_train_1200_wo_ACDC_phi"
+        testidList: "testid_files_frames24_25_NormPer"
+
+    test:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        normalize: "None"
+        resize: [64, 64]
+        drop_first_frame: 0
+        start_frame: "0"
+        split: "test_id"
+        Start_Subject_ID: 0
+        dataBase: "0TLRN_Foundation"
+        trainList: "train_1200_img"
+        train_index_endEstolic_list: "index_endEstolic_train_1200_wo_ACDC_phi"
+        testidList: "testid_files_frames24_25_NormPer"

@@ -1,0 +1,66 @@
+model:
+  # pretrained_checkpoint: /scratch/bsw3ac/nellie/code/cvpr/Project/LightningTemplate/2026Experiments/CINE/outputs/TLRN/basic_MSE_Penp_img1200/checkpoints/==epoch=2961-val_loss=0.0092.ckpt
+  pretrained_checkpoint: /sfs/weka/scratch/swd9tc/Uncertanity_quantification/LightningTemplate/2026Experiments/CINE/outputs/TLRN/basic_MSE_Penp_img1200Reg0.03/checkpoints/epoch=12913-val_mse=0.0059.ckpt
+
+  params:
+    ch_sz: 1
+    weight_reg: 0.03
+    regis_lr: 0.001
+
+
+data:
+  target: dataload.2025data.DataModuleFromConfig
+  params:
+    batch_size: 100
+    num_workers: 4
+    batch_size_test: 20
+    
+    train:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        # normalize: "percentile"
+        normalize: "None"
+        resize: [64, 64]
+        split: "train"
+        start_frame: "0"
+        dataBase: "0TLRN_Foundation"
+        trainList: "train_1200_img"
+        train_index_endEstolic_list: "index_endEstolic_train_1200_wo_ACDC_phi"
+        testidList: "testid_files_frames24_25_NormPer"
+
+
+
+    valid:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        # normalize: "percentile"
+        normalize: "None"
+        resize: [64, 64]
+        split: "valid"
+        start_frame: "0"
+        dataBase: "0TLRN_Foundation"
+        trainList: "train_1200_img"
+        train_index_endEstolic_list: "index_endEstolic_train_1200_wo_ACDC_phi"
+        testidList: "testid_files_frames24_25_NormPer"
+
+    test:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        # normalize: "minmax" #histmatch   percentile
+        # normalize: "histmatch" #histmatch   percentile
+        # # normalize: "percentile" #histmatch   percentile
+        normalize: "None"
+        resize: [64, 64]
+        drop_first_frame: 0
+        start_frame: "0"
+        split: "test_id"
+        # split: "test_ood_ACDC"
+        # split: "train"
+        # split: "test_ood_Rishov_Cine"
+        # split: "test_ood_Rishov_Dense"
+        # FileLen: 2
+        Start_Subject_ID: 0
+        dataBase: "0TLRN_Foundation"
+        trainList: "train_1200_img"
+        train_index_endEstolic_list: "index_endEstolic_train_1200_wo_ACDC_phi"
+        testidList: "testid_files_frames24_25_NormPer"

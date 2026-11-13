@@ -1,0 +1,125 @@
+model:
+  pretrained_checkpoint: /scratch/bsw3ac/nellie/code/cvpr/Project/LightningTemplate/2026Experiments/CINE/outputs/TLRN/basic/checkpoints/==epoch=4431-step=97504.ckpt
+
+  base_learning_rate: 1.0e-05
+  scale_lr: False
+  target: models.TLRN.Net2DResNet
+
+  params:
+    hasLabels: True
+    inshape: [64, 64]
+
+
+  
+    weight_mse: 1.0
+
+
+    weight_reg: 0.03
+    weight_reg_Temporal: 0.03
+
+
+    # unet_lr: 0.0005
+    # nop_lr: 0.0005
+    PredictMomnetum: False
+
+
+    regis_lr: 0.0001
+    weight_decay: 0
+
+
+    reg_config: 
+      # target: metrics.regmetrics.MVMList
+      target: metrics.reg_metrics_normal.MVGradList
+      params:
+        ndims: 2
+        # penalty: 'l2'  #for MVGradList
+
+
+
+        
+
+
+data:
+  target: dataload.2025data.DataModuleFromConfig
+  params:
+    batch_size: 200
+    num_workers: 4
+    batch_size_test: 20
+    
+    train:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        normalize: "minmax"
+        resize: [64, 64]
+        split: "train"
+        start_frame: "random"
+
+    valid:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        normalize: "minmax"
+        resize: [64, 64]
+        split: "valid"
+        start_frame: "0"
+
+    test:
+      target: dataload.2025Foundation_CINE.NiftiDataset
+      params:
+        normalize: "minmax" #histmatch   percentile
+        # normalize: "histmatch" #histmatch   percentile
+        # normalize: "percentile" #histmatch   percentile
+
+        resize: [64, 64]
+        drop_first_frame: 0
+        start_frame: "0"
+        split: "test_id"
+        # split: "test_ood_ACDC"
+        # split: "train"
+        
+
+        # split: "test_ood_Rishov_Cine"
+        # split: "test_ood_Rishov_Dense"
+        # #FileLen: 1140
+        Start_Subject_ID: 0
+
+
+      
+
+
+lightning:
+  precision: 32
+  strategy: "dp"
+  trainer:
+    benchmark: true
+    accumulate_grad_batches: 2
+    max_epochs: 20000
+    min_epochs: 500
+    log_every_n_steps: 50
+    check_val_every_n_epoch: 2
+    num_nodes: 1
+  callbacks:
+    model_checkpoint:
+      target: pytorch_lightning.callbacks.ModelCheckpoint
+      params:
+        every_n_epochs: 1 #1000
+        filename: "{epoch}-{step}"
+        save_weights_only: True
+    metrics_val_loss_checkpoint:
+      target: pytorch_lightning.callbacks.ModelCheckpoint
+      params:
+        monitor: "val_loss"            # 监控的 metric
+        mode: "min"                    # 保存最小值
+        filename: "{epoch}-{val_loss:.4f}"
+        save_top_k: 1                  # 只保留最优的检查点
+        save_weights_only: True         # 只保存权重
+    metrics_mse_loss_checkpoint:
+      target: pytorch_lightning.callbacks.ModelCheckpoint
+      params:
+        monitor: "val_mse"            # 监控的 metric
+        mode: "min"                  # 保存最小值
+        filename: "{epoch}-{val_mse:.4f}"
+        save_top_k: 1                  # 只保留最优的检查点
+        save_weights_only: True         # 只保存权重
+
+
+
